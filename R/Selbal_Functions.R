@@ -4,7 +4,7 @@
 # Define the function selbal
   selbal <- function(x, y, th.imp = 0, covar = NULL, logit.acc="AUC",
                      logt=T, col = c("steelblue1", "tomato1"), tab=T,
-                     draw=T, maxV = 1e10, zero.rep = "bayes"){
+                     draw=T, maxV = 1e10, zero.rep = "one"){
 
       # y1=as.numeric(y)
       # nulldev0<-deviance(glm(y1~1))
@@ -47,7 +47,7 @@
     # The logCounts (with zero replacement)
       if (logt == F){ logCounts <- x
       } else{
-        logCounts <- log(cmultRepl2(x, zero.rep = zero.rep))
+        logCounts <- log(cmultRepl2(x, zero.rep = "one"))
       }
 
 
@@ -539,7 +539,7 @@
         FINAL.P <- arrangeGrob(Imp.table, ROC.plot, BoxP, ydensity,
                                ncol=2, nrow=2, widths=c(5,1.25), heights=c(2, 5),
                                vp=viewport(width=0.8, height=0.8))
-        
+
         library(gtable)
         g1 <- ggplotGrob(Imp.table2)
         g2 <- ggplotGrob(BoxP2)
@@ -548,7 +548,7 @@
         g <- rbind(g, g3, size = "first")
         g$widths <- unit.pmax(g1$widths,g2$widths)
         FINAL.P2 <- g
-      
+
       } else {
 
         # Fit the regression model
@@ -716,7 +716,7 @@
   selbal.cv <- function(x, y, n.fold = 5, n.iter = 10, seed = 31415,
                         covar = NULL, col = c("steelblue1", "tomato1"),
                         col2 = c("darkgreen", "steelblue4","tan1"),
-                        logit.acc = "AUC", maxV = 20, zero.rep = "bayes",
+                        logit.acc = "AUC", maxV = 20, zero.rep = "one",
                         opt.cri = "1se", user_numVar = NULL){
 
     # Load package plyr
@@ -773,7 +773,7 @@
       "\n# ZERO REPLACEMENT . . .\n\n"))
 
     # Define log-transformed data with the zero-replacement made
-    logc <- log(cmultRepl2(x, zero.rep = zero.rep))
+    logc <- log(cmultRepl2(x, zero.rep = "one"))
 
 
     cat(paste("\n, . . . FINISHED.",
@@ -1308,7 +1308,7 @@
 
 
   selbal.aux <- function(x, y, th.imp = 0, covar = NULL, logit.acc="AUC",
-                         logt=T, maxV = 1e10, zero.rep = "bayes"){
+                         logt=T, maxV = 1e10, zero.rep = "one"){
 
     #--------------------------------------------------------------------------#
     # STEP 0: load libraries and extract information
@@ -1973,8 +1973,8 @@
         g <- rbind(g, g3, size = "first")
         g$widths <- unit.pmax(g1$widths,g2$widths)
         FINAL.P2 <- g
-        
-        
+
+
         # Build a list with the elements of interest
         L <- list(Global.plot = FINAL.P,Global.plot2 = FINAL.P2, ROC.plot = ROC.plot)
 
@@ -2214,14 +2214,14 @@
   #' # Load the count matrix (with zeros)
   #'   x <- HIV[,1:60]
   #' # Zero replacement
-  #'   x.non0 <- cmultRepl2(x, zero.rep = "bayes")
+  #'   x.non0 <- cmultRepl2(x, zero.rep = "one")
   #'
   #'
   #' @export cmultRepl2
 
 
 
-  cmultRepl2 <- function(x, zero.rep = "bayes"){
+  cmultRepl2 <- function(x, zero.rep = "one"){
 
     # Load library
     library(zCompositions)
